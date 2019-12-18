@@ -4,7 +4,7 @@ import 'package:teste_toro_full_stack_frontend/model/Ativo.dart';
 
 class Conta {
   final String id;
-  final Double saldo;
+  final double saldo;
   final List<Ativo> ativos;
 
   Conta({

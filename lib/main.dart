@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'model/Ativo.dart';
 import 'model/Conta.dart';
 
 void main() => runApp(MyApp());
-
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -40,32 +38,11 @@ class AtivosList {
   });
 }
 
-Future<Conta> createAccount() async{
 
-  Map data = {
-    'saldo': 0,
-    'ativos':[]
-  };
-
-  final response = await
-    http.post('http://192.168.5.38:3333/cadastro',
-        headers: {"Content-Type": "application/json"},
-        body: json.encode(data),
-      );
-
-  if (response.statusCode == 200) {
-    final jsonResponse = json.decode(response.body);
-    final conta = new Conta.fromJson(jsonResponse);
-
-  } else {
-    throw Exception('Failed to load post');
-  }
-}
 
 Future<List<Ativo>> loadAtivos() async{
-  //if(contaGlo == null) {
-    createAccount();
-  //}
+
+  createAccount();
 
   final response = await http.get('http://192.168.5.38:3333/ativos');
 
@@ -73,7 +50,28 @@ Future<List<Ativo>> loadAtivos() async{
     List responseJson = json.decode(response.body);
     return responseJson.map((i) => new Ativo.fromJson(i)).toList();
   } else {
-    throw Exception('Failed to load post');
+    throw Exception('Falha ao obter ativos');
+  }
+}
+
+Future<Conta> createAccount() async{
+
+  Map data = {
+    'saldo': 0.01,
+    'ativos':[]
+  };
+
+  final response = await
+  http.post('http://192.168.5.38:3333/cadastro',
+    headers: {"Content-Type": "application/json"},
+    body: json.encode(data),
+  );
+
+  if (response.statusCode == 200) {
+    final jsonResponse = json.decode(response.body);
+    return new Conta.fromJson(jsonResponse);
+  } else {
+    throw Exception('Falha ao cadastrar conta');
   }
 }
 
@@ -95,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+
       ),
       body: Center(
         child: FutureBuilder<List<Ativo>>(
@@ -107,10 +106,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   Ativo ativoObj = ativosObj[index];
                   return new ListTile(
                     title: new Text(ativoObj.nome),
-                    trailing: new Text("Comprar"),
+                    trailing: new Text(ativoObj.valor.toString()),
                     onTap: () {
-                      Navigator.push(context,
-                          new MaterialPageRoute(builder: (context) => new MyHomePage()));
+                      //Navigator.push(context,
+                          //new MaterialPageRoute(builder: (context) => new MyHomePage()));
                     },
                   );
                 });

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 class Ativo {
   //final int id;
   final String nome;
